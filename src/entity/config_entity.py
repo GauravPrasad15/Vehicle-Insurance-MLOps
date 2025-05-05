@@ -1,0 +1,61 @@
+import os
+from src.constants import *
+from dataclasses import dataclass
+from datetime import datetime
+
+TIMESTAMP: str = datetime.now().strftime("%m_%d_%Y_%H_%M_%S")
+
+'''
+What is dataclass decorator?
+@dataclass in Python is a decorator used to automatically generate special methods (like __init__, __repr__, __eq__, etc.)
+for classes that are mainly used to store data—so you don't have to write all that boilerplate code yourself.
+
+from dataclasses import dataclass
+
+@dataclass
+class Person:
+    name: str
+    age: int
+
+
+Without decorator class - 
+
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def __repr__(self):
+        return f"Person(name={self.name!r}, age={self.age!r})"
+
+        
+Customizations that can be made -
+
+@dataclass(frozen=True, order=True)
+class Point:
+    x: int
+    y: int
+
+    
+frozen=True: makes it immutable (like a tuple)
+order=True: adds comparison methods (<, >, etc.)
+'''
+
+
+@dataclass                                                       # @dataclass - decorator
+class TrainingPipelineConfig:
+    pipeline_name: str = PIPELINE_NAME
+    artifact_dir: str = os.path.join(ARTIFACT_DIR, TIMESTAMP)    # all artifacts get stored in this directory
+    timestamp: str = TIMESTAMP
+
+
+training_pipeline_config: TrainingPipelineConfig = TrainingPipelineConfig()   # object creation and assigning it a name
+
+@dataclass
+class DataIngestionConfig:
+    data_ingestion_dir: str = os.path.join(training_pipeline_config.artifact_dir, DATA_INGESTION_DIR_NAME)
+    feature_store_file_path: str = os.path.join(data_ingestion_dir, DATA_INGESTION_FEATURE_STORE_DIR, FILE_NAME)
+    training_file_path: str = os.path.join(data_ingestion_dir, DATA_INGESTION_INGESTED_DIR, TRAIN_FILE_NAME)
+    testing_file_path: str = os.path.join(data_ingestion_dir, DATA_INGESTION_INGESTED_DIR, TEST_FILE_NAME)
+    train_test_split_ratio: float = DATA_INGESTION_TRAIN_TEST_SPLIT_RATIO
+    collection_name:str = DATA_INGESTION_COLLECTION_NAME
